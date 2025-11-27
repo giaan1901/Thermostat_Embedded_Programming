@@ -1,201 +1,137 @@
-Thermostat Controller – STM32F411CEU6
+# 🧊 STM32 Thermostat Controller  
+**Author:** Hà Gia An – *2352004*  
+**MCU:** STM32F411CEU6  
+**Display:** 16×2 LCD (I2C backpack)  
+**Input:** 4 physical buttons (POWER, SET, UP, DOWN)
 
-Author: Hà Gia An – 2352004
+---
 
-📌 Overview
+## 📌 Overview  
+This project implements a simple **thermostat controller** using the STM32F411CEU6 microcontroller.  
+It monitors room temperature (0–60 °C), allows the user to set a target temperature, and controls the cooling fan using a classic **ON/OFF control algorithm**.
 
-This project implements a simple thermostat controller using an STM32F411CEU6 microcontroller.
-The system periodically measures room temperature, allows the user to configure a temperature setpoint, and controls an air-conditioner fan using an ON/OFF control algorithm.
+---
 
-✨ Features
+## ✨ Features  
+- 🔥 **Temperature Monitoring** every **500 ms**  
+- 🎯 **1°C resolution** from 0°C → 60°C  
+- 🖥️ **16×2 I2C LCD** user interface  
+- 🎛️ **User-configurable temperature threshold**  
+- 🌀 **ON/OFF cooling control**  
+- 🔘 **Four-button control system**  
+- 📡 **Fan status displayed on LCD**
 
-Temperature measurement every 500 ms
+---
 
-Temperature resolution: 1 °C
+## 📟 Hardware Used  
+| Component | Description |
+|----------|-------------|
+| **STM32F411CEU6 (“Blackpill”)** | Main microcontroller |
+| **16×2 I2C LCD** | For UI and temperature display |
+| **4× Push Buttons** | Power, Set, Up, Down |
+| **Cooling Fan (Relay / MOSFET output)** | ON/OFF cooling control |
+| **Temperature Sensor** | Example: LM35 / DS18B20 / Analog sensor |
 
-User interface with 4 buttons:
+---
 
-POWER
+## 🎮 Button Functions  
+All buttons support **short press** and some support **hold press**.
 
-SET
+### Button Press Timing  
+| Press Type | Detection Time |
+|------------|----------------|
+| **Short Press** | < 500 ms |
+| **Long Press (Hold)** | > 1 second |
 
-UP
+### 📘 Button Behavior  
+| Button | Short Press | Long Press |
+|--------|-------------|------------|
+| **POWER** | Toggle system ON/OFF | — |
+| **SET** | Enter/Exit temperature setting mode | — |
+| **UP** | Increase temperature by +1°C | Hold to auto-increase |
+| **DOWN** | Decrease temperature by −1°C | Hold to auto-decrease |
 
-DOWN
+---
 
-LCD 16×2 with I2C interface
+## 🧠 Control Algorithm — ON/OFF Logic  
+The thermostat uses classic **bang-bang ON/OFF control**:
 
-ON/OFF fan control based on setpoint
-
-Display of:
-
-Current temperature
-
-Fan state (ON/OFF)
-
-System state (ON/OFF)
-
-Setpoint value
-
-🧰 Hardware Used
-
-STM32F411CEU6 (Black Pill)
-
-LCD 16x2 I2C (PCF8574 backpack)
-
-Temperature sensor (LM35, DS18B20, or equivalent)
-
-4 push buttons
-
-Fan output driver (Relay or MOSFET)
-
-5V / 3.3V power supply
-
-🔌 Pin Configuration (Example)
-Component	Pin
-I2C LCD – SCL	PB8
-I2C LCD – SDA	PB9
-Button – POWER	PA0
-Button – SET	PA1
-Button – UP	PA2
-Button – DOWN	PA3
-Temperature Sensor (ADC)	PA4
-Fan Control Output	PA5
-
-Pin assignments may be modified as needed.
-
-🧠 Software Architecture
-1. Temperature Sampling Task
-
-Runs every 500 ms
-
-Reads from ADC or digital sensor
-
-Converts raw value to °C
-
-Updates global temperature variable
-
-2. Control Algorithm (ON/OFF)
-if (temperature > setpoint)
+```
+if (current_temp > set_temp) {
     fan = ON;
-else
+} else {
     fan = OFF;
+}
+```
 
-3. User Interface
+- No PID  
+- No hysteresis (unless you add it)  
+- Simple and effective for slow thermal systems
 
-Button scanning + debouncing (10–20 ms)
+---
 
-Supports short press & long press
+## 📺 LCD Display Format  
+**Normal Mode:**
+```
+Temp: 26°C
+Fan: OFF
+```
 
-Updates display and internal states
+**Setting Mode:**
+```
+Set Temp: 24°C
+<UP/DOWN to adjust>
+```
 
-4. LCD Display Task
+---
 
-Runs periodically or event-based
+## 🔧 Firmware Behavior  
+- Reads temperature every **500 ms**
+- Updates LCD every **500 ms**
+- Button debouncing included
+- Long-press auto-repeat for UP/DOWN every **200 ms**
+- State machine handles:
+  - **POWER_STATE**
+  - **SET_TEMP_STATE**
+  - **RUN_STATE**
 
-Shows real-time temperature, fan state, and setpoint
+---
 
-📺 LCD Display Format
-Normal Operation:
-Temp: 27C  Fan:ON
-Setpoint: 25C
-
-Setpoint Adjustment Mode:
-Adjust Setpoint:
-       26C
-
-🕹 User Manual (with Specific Button Hold Times)
-
-All buttons include debouncing and hold detection.
-
-1. POWER Button
-
-Short Press ( < 500 ms )
-Toggle system ON → OFF → ON
-
-Long Press ( > 1.5 seconds )
-Reserved for future features (e.g., reset or calibration)
-
-Behavior:
-
-When OFF, the fan is forced OFF.
-
-LCD shows:
-
-System OFF
-
-2. SET Button
-
-Short Press ( < 500 ms )
-Enter or exit Setpoint Adjustment Mode.
-
-Long Press ( > 1.5 seconds )
-Reset setpoint to default 25 °C.
-
-3. UP Button
-
-Short Press ( < 300 ms )
-Increase setpoint by +1 °C.
-
-Long Press ( > 700 ms )
-Auto-increment continuously at +1 °C every 150 ms.
-
-Max setpoint: 60 °C
-
-4. DOWN Button
-
-Short Press ( < 300 ms )
-Decrease setpoint by –1 °C.
-
-Long Press ( > 700 ms )
-Auto-decrement continuously at –1 °C every 150 ms.
-
-Min setpoint: 0 °C
-
-🧊 Temperature Control Logic (ON/OFF)
-
-If temperature > setpoint → Fan ON
-
-If temperature ≤ setpoint → Fan OFF
-
-Optional (not required but recommended)
-
-You may add hysteresis to avoid rapid fan toggling:
-
-Fan ON   if temperature >= setpoint + 1
-Fan OFF  if temperature <= setpoint - 1
-
-📦 Recommended Folder Structure
+## 📁 Project Structure  
+```
 /Core
-   /Inc
-   /Src
-/Drivers
+  /Src
+    main.c
+    lcd_i2c.c
+    buttons.c
+    thermostat.c
+  /Inc
+    lcd_i2c.h
+    buttons.h
+    thermostat.h
+
 README.md
-LICENSE
+```
 
-⚙️ Development Environment
+---
 
-STM32CubeIDE
+## 🚀 How to Use  
+1. Power the system using USB or 5V input.  
+2. Press **POWER** to start the thermostat.  
+3. View current temperature on LCD.  
+4. Press **SET** to enter temperature configuration.  
+5. Use **UP/DOWN** to adjust temperature.  
+6. Fan automatically turns ON/OFF depending on room temperature.
 
-STM32 HAL drivers
+---
 
-I2C LCD driver (HD44780 + PCF8574)
+## 🛠️ Future Improvements  
+- Add **hysteresis** (±1°C) to reduce relay switching  
+- Add **PID control** for smoother response  
+- Add **EEPROM storage** for the last temperature set point  
+- Add **Buzzer** notification
 
-FreeRTOS (optional, but not required)
+---
 
-📝 Future Improvements
-
-Add hysteresis control
-
-Use PID instead of ON/OFF
-
-Add EEPROM saving for setpoint value
-
-Add buzzer for notifications
-
-Use encoder instead of buttons
-
-📄 License
-
-This project is released under the MIT License.
-You are free to modify, share, and use it for learning or development purposes.
+## 📜 License  
+MIT License — feel free to use and modify.
