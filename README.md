@@ -100,20 +100,46 @@ Set Temp: 24°C
 
 ## 📁 Project Structure  
 ```
-/Core
-  /Src
-    main.c
-    lcd_i2c.c
-    buttons.c
-    thermostat.c
-    eeprom_emulation.c
-  /Inc
-    lcd_i2c.h
-    buttons.h
-    thermostat.h
-    eeprom_emulation.h
+/ProjectRoot
+│
+├── Core/
+│   ├── Inc/
+│   │   ├── main.h
+│   │   ├── lcd_i2c.h
+│   │   ├── buttons.h
+│   │   ├── thermostat.h
+│   │   └── eeprom_emulation.h
+│   │
+│   └── Src/
+│       ├── main.c
+│       ├── lcd_i2c.c
+│       ├── buttons.c
+│       ├── thermostat.c      ← contains ON/OFF logic
+│       └── eeprom_emulation.c
+│
+├── BSP/                      ← hardware access
+│   ├── bsp_lcd.c
+│   ├── bsp_lcd.h
+│   ├── bsp_buttons.c
+│   ├── bsp_buttons.h
+│   ├── bsp_temp_sensor.c
+│   └── bsp_temp_sensor.h
+│
+├── App/                      ← application logic (UI + control)
+│   ├── app_display.c         ← builds LCD text, including "Fan: ON/OFF"
+│   ├── app_display.h
+│   ├── app_buttons.c
+│   ├── app_buttons.h
+│   ├── app_controller.c      ← state machine + ON/OFF thermostat
+│   └── app_controller.h
+│
+├── Docs/
+│   ├── README.md
+│   ├── wiring_diagram.png
+│   └── state_machine_diagram.png
+│
+└── .gitignore
 
-README.md
 ```
 
 ---
