@@ -30,7 +30,7 @@ It monitors room temperature (0–60 °C), allows the user to set a target tempe
 | **16×2 I2C LCD** | For UI and temperature display |
 | **4× Push Buttons** | Power, Set, Up, Down |
 | **Cooling Fan (Relay / MOSFET output)** | ON/OFF cooling control |
-| **Temperature Sensor** | Example: LM35 / DS18B20 / Analog sensor |
+| **Temperature Sensor** | LM35 |
 
 ---
 
@@ -41,7 +41,7 @@ All buttons support **short press** and some support **hold press**.
 | Press Type | Detection Time |
 |------------|----------------|
 | **Short Press** | < 500 ms |
-| **Long Press (Hold)** | > 1 second |
+| **Long Press (Hold)** | > 2 second |
 
 ### 📘 Button Behavior  
 | Button | Short Press | Long Press |
