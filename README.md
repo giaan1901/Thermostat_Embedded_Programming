@@ -106,10 +106,12 @@ Set Temp: 24°C
     lcd_i2c.c
     buttons.c
     thermostat.c
+    eeprom_emulation.c
   /Inc
     lcd_i2c.h
     buttons.h
     thermostat.h
+    eeprom_emulation.h
 
 README.md
 ```
