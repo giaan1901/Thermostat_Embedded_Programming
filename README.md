@@ -13,13 +13,14 @@ It monitors room temperature (0–60 °C), allows the user to set a target tempe
 ---
 
 ## ✨ Features  
-- 🔥 **Temperature Monitoring** every **500 ms**  
-- 🎯 **1°C resolution** from 0°C → 60°C  
-- 🖥️ **16×2 I2C LCD** user interface  
-- 🎛️ **User-configurable temperature threshold**  
-- 🌀 **ON/OFF cooling control**  
-- 🔘 **Four-button control system**  
-- 📡 **Fan status displayed on LCD**
+- **Temperature Monitoring** every **500 ms**  
+- **1°C resolution** from 0°C → 60°C  
+- **16×2 I2C LCD** user interface  
+- **User-configurable temperature threshold**  
+- **ON/OFF cooling control**  
+- **Four-button control system**  
+- **Fan status displayed on LCD**
+- **EEPROM storage** for the last temperature set point  
 
 ---
 
@@ -128,7 +129,6 @@ README.md
 ## 🛠️ Future Improvements  
 - Add **hysteresis** (±1°C) to reduce relay switching  
 - Add **PID control** for smoother response  
-- Add **EEPROM storage** for the last temperature set point  
 - Add **Buzzer** notification
 
 ---
